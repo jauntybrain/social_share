@@ -82,14 +82,17 @@
         NSURL *urlScheme = [NSURL URLWithString:[NSString stringWithFormat:@"%@://share?source_application=%@", stories,appId]];
         
         if ([[UIApplication sharedApplication] canOpenURL:urlScheme]) {
-
             if (@available(iOS 10.0, *)) {
-            NSDictionary *pasteboardOptions = @{UIPasteboardOptionExpirationDate : [[NSDate date] dateByAddingTimeInterval:60 * 5]};
-            // This call is iOS 10+, can use 'setItems' depending on what versions you support
-            [[UIPasteboard generalPasteboard] setItems:@[pasteboardItems] options:pasteboardOptions];
+                NSDictionary *pasteboardOptions = @{UIPasteboardOptionExpirationDate : [[NSDate date] dateByAddingTimeInterval:60 * 5]};
+                [[UIPasteboard generalPasteboard] setItems:@[pasteboardItems] options:pasteboardOptions];
 
-            [[UIApplication sharedApplication] openURL:urlScheme options:@{} completionHandler:nil];
-              result(@"success");
+                [[UIApplication sharedApplication] openURL:urlScheme options:@{} completionHandler:^(BOOL success) {
+                    if (success) {
+                        result(@"success");
+                    } else {
+                        result(@"error");
+                    }
+                }];
             } else {
                 result(@"error");
             }
@@ -122,8 +125,13 @@
         NSString* urlTextEscaped = [urlSchemeTwitter stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         NSURL *urlSchemeSend = [NSURL URLWithString:urlTextEscaped];
         if (@available(iOS 10.0, *)) {
-            [[UIApplication sharedApplication] openURL:urlSchemeSend options:@{} completionHandler:nil];
-            result(@"success");
+            [[UIApplication sharedApplication] openURL:urlSchemeSend options:@{} completionHandler:^(BOOL success) {
+                if (success) {
+                    result(@"success");
+                } else {
+                    result(@"error");
+                }
+            }];
         } else {
             result(@"error");
         }
@@ -144,8 +152,13 @@
             NSURL *urlScheme = [NSURL URLWithString:urlSchemeSms];
             if ([[UIApplication sharedApplication] canOpenURL:urlScheme]) {
                 if (@available(iOS 10.0, *)) {
-                    [[UIApplication sharedApplication] openURL:urlScheme options:@{} completionHandler:nil];
-                    result(@"success");
+                    [[UIApplication sharedApplication] openURL:urlScheme options:@{} completionHandler:^(BOOL success) {
+                        if (success) {
+                            result(@"success");
+                        } else {
+                            result(@"error");
+                        }
+                    }];
                 } else {
                     result(@"error");
                 }
@@ -165,8 +178,13 @@
                 NSURL *urlSchemeMsg = [NSURL URLWithString:urlWithLink];
                 if ([[UIApplication sharedApplication] canOpenURL:urlScheme]) {
                     if (@available(iOS 10.0, *)) {
-                        [[UIApplication sharedApplication] openURL:urlSchemeMsg options:@{} completionHandler:nil];
-                        result(@"success");
+                        [[UIApplication sharedApplication] openURL:urlSchemeMsg options:@{} completionHandler:^(BOOL success) {
+                            if (success) {
+                                result(@"success");
+                            } else {
+                                result(@"error");
+                            }
+                        }];
                     } else {
                         result(@"error");
                     }
@@ -184,8 +202,13 @@
                 NSURL *urlSchemeMsg = [NSURL URLWithString:finalUrl];
                 if ([[UIApplication sharedApplication] canOpenURL:urlScheme]) {
                     if (@available(iOS 10.0, *)) {
-                        [[UIApplication sharedApplication] openURL:urlSchemeMsg options:@{} completionHandler:nil];
-                        result(@"success");
+                        [[UIApplication sharedApplication] openURL:urlSchemeMsg options:@{} completionHandler:^(BOOL success) {
+                            if (success) {
+                                result(@"success");
+                            } else {
+                                result(@"error");
+                            }
+                        }];
                     } else {
                         result(@"error");
                     }
@@ -204,23 +227,31 @@
         NSString * urlWhats = [NSString stringWithFormat:@"whatsapp://send?text=%@",content];
         NSURL * whatsappURL = [NSURL URLWithString:[urlWhats stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
         if ([[UIApplication sharedApplication] canOpenURL: whatsappURL]) {
-            [[UIApplication sharedApplication] openURL: whatsappURL];
-            result(@"success");
+            [[UIApplication sharedApplication] openURL:whatsappURL options:@{} completionHandler:^(BOOL success) {
+                if (success) {
+                    result(@"success");
+                } else {
+                    result(@"error");
+                }
+            }];
         } else {
             result(@"error");
         }
-        result([NSNumber numberWithBool:YES]);
     } else if ([@"shareTelegram" isEqualToString:call.method]) {
         NSString *content = call.arguments[@"content"];
         NSString * urlScheme = [NSString stringWithFormat:@"tg://msg?text=%@",content];
         NSURL * telegramURL = [NSURL URLWithString:[urlScheme stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
         if ([[UIApplication sharedApplication] canOpenURL: telegramURL]) {
-            [[UIApplication sharedApplication] openURL: telegramURL];
-            result(@"success");
+            [[UIApplication sharedApplication] openURL:telegramURL options:@{} completionHandler:^(BOOL success) {
+                if (success) {
+                    result(@"success");
+                } else {
+                    result(@"error");
+                }
+            }];
         } else {
             result(@"error");
         }
-        result([NSNumber numberWithBool:YES]);
     } else if ([@"shareOptions" isEqualToString:call.method]) {
         NSString *content = call.arguments[@"content"];
         NSString *image = call.arguments[@"image"];
